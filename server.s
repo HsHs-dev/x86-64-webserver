@@ -1,6 +1,10 @@
 .intel_syntax noprefix
 .global _start
 _start:
+
+
+# call socket
+###################################################
 # create socket
 # socket(AF_INET, SOCK_STREAM, 0)
 # AF_INET = 2
@@ -10,8 +14,11 @@ mov rsi, 1
 mov rdx, 0
 mov rax, 0x29
 syscall
+###################################################
+
 
 # call bind
+################################################### call bind
 # int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 
 # put the struct (16 bytes) on the stack
@@ -44,16 +51,20 @@ syscall
 
 # inc stack
 add rsp, 0x10
+###################################################
 
 # save the socket fd on the stack
 sub rsp, 0x8
 mov [rsp], rbx
 
 # call listen
+###################################################
 mov rdi, rbx
 mov rsi, 0x0
 mov rax, 0x32
 syscall
+###################################################
+
 
 accept:
 
@@ -61,11 +72,13 @@ accept:
 mov rbx, [rsp]
 
 # call accept
+###################################################
 mov rdi, rbx
 mov rsi, 0x0
 mov rdx, 0x0
 mov rax, 0x2B
 syscall
+###################################################
 
 # save accept fd
 mov rbx, rax
