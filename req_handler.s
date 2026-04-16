@@ -15,7 +15,7 @@
                  # "GET " = 0x47455420 flipped
 .equ GET_VAL,      0x20544547
                  # "POST" = 0x504f5354 flipped
-.equ POST_VAL,     0x54534f50  
+.equ POST_VAL,     0x54534f50
                  # "\r\n\r\n" = 0x0d0a0d0a flipped
 .equ HEADERS_END,  0x0a0d0a0d
 
@@ -25,6 +25,10 @@
 .equ POST_FILENAME_OFFSET, 0x5
 
 .equ BUF_SIZE, 0x100
+
+.equ O_RDONLY,      0x0
+.equ O_WRONLY,      0x1
+.equ O_CREAT,       0x40
 
 .section .text
 
@@ -50,13 +54,13 @@ req_handler:
     # determine the end of the file path (by the first whitespace)
     # and put '\0' to mark the end of it
     mov rsi, rdi
-    loop:
+    get_loop:
     mov al, [rsi]
     cmp al, SPACE
-    je done
+    je get_done
     inc rsi
     jmp loop
-    done:
+    get_done:
     mov byte ptr [rsi], 0x0
 
     call open
@@ -74,7 +78,7 @@ req_handler:
     # save the number of read bytes
     mov r15, rax
 
-    # close the requested file 
+    # close the requested file
     mov rdi, r14
     call close
 
@@ -92,8 +96,67 @@ req_handler:
     jmp end
 
 
+
   post:
-    # TODO
+    mov r14, rdi # save the buf*
+    mov r15, rsi # save the number of read bytes
+
+    # mark beginning and ending of the filepath
+    add rdi, POST_FILENAME_OFFSET
+    # determine the end of the file path (by the first whitespace)
+    # and put '\0' to mark the end of it
+    mov rsi, rdi
+    post_loop:
+      mov al, [rsi]
+      cmp al, SPACE
+      je post_done
+      inc rsi
+      jmp post_loop
+      post_done:
+      mov byte ptr [rsi], 0x0
+
+    # find the content length by subtracting the request length
+    # from the total length of the headers
+    mov rdx, r14
+    mov rax, 0x0 # counter
+    length_loop:
+      #0x0a0d0a0d
+      cmp byte ptr [rdx], 0x0d
+      jne next
+      cmp byte ptr [rdx + 1], 0x0a
+      jne next
+      cmp byte ptr [rdx + 2], 0x0d
+      jne next
+      cmp byte ptr [rdx + 3], 0x0a
+      je length_done
+    next:
+      inc rdx
+      inc rax
+      jmp length_loop
+    length_done:
+    add rdx, 0x4 # skip the \r\n\r\n
+    add rax, 0x4
+    mov r14, rdx
+#    sub r15, rax
+
+    mov rsi, O_WRONLY | O_CREAT
+    mov rdx, 0777
+    call open
+
+    push rax
+
+    mov rdi, rax
+    mov rsi, r14
+    mov rdx, r15
+    call write
+
+    pop rdi
+    call close
+
+    call write_res_msg
+
+    jmp end
+
 
 
 
@@ -105,8 +168,7 @@ req_handler:
     call write
     ret
 
-  end:    
+  end:
     pop r15
     pop r14
     ret
-

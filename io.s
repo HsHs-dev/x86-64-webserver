@@ -12,7 +12,6 @@
 .equ SYS_CLOSE,     0x3
 
 
-.equ O_RDONLY,      0x0
 
 
 .section .text
@@ -22,7 +21,6 @@ open a given filepath name and return an fd to it
 int open(const char *pathname, int flags);
 */
 open:
-  mov rsi, O_RDONLY
   mov rax, SYS_OPEN
   syscall
   ret

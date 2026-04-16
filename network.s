@@ -6,8 +6,6 @@
 .global listen
 .global accept
 
-.section .text
-
 # network functions syscalls RAX value
 .equ SYS_SOCKET,    0x29
 .equ SYS_BIND,      0x31
@@ -23,8 +21,6 @@
 
 
 .section .text
-.global _start
-_start:
 
 /*
 create a network socket

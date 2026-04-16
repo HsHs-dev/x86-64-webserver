@@ -85,7 +85,8 @@ accept_loop:
   call read
 
   # parse and fullfil the request
-  mov rdi, rsp
+  mov rdi, rsp # buf
+  mov rsi, rax # number of read bytes
   call req_handler
 
   # restore the buffer
