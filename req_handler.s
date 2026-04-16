@@ -7,7 +7,6 @@
 
 .section .data
   res_msg:
-    # TODO: not sure about memory alignment
     .ascii "HTTP/1.0 200 OK\r\n\r\n"
 
 .global req_handler
@@ -31,6 +30,9 @@
 
 req_handler:
 
+  push r14
+  push r15
+
   /* parse the request */
 
   # load the first 4 bytes (either "GET " or "POST")
@@ -40,9 +42,7 @@ req_handler:
   je get
   cmp eax, POST_VAL
   je post
-  jmp unkown_method
-
-
+  ret
 
   get:
     # mark beginning and ending of the filepath
@@ -62,7 +62,7 @@ req_handler:
     call open
 
     # save the opened fd
-    push rax
+    mov r14, rax
 
     # read the contents of the requested file
     sub rsp, BUF_SIZE
@@ -71,27 +71,25 @@ req_handler:
     mov rdx, BUF_SIZE
     call read
 
-    # restore the opened fd
-    pop rdi
-
     # save the number of read bytes
-    push rax
+    mov r15, rax
 
     # close the requested file 
+    mov rdi, r14
     call close
 
     call write_res_msg
 
     # write the contents
-    mov rdi, rbx
+    mov rdi, r12
     mov rsi, rsp
-    pop rdx # number of read bytes
+    mov rdx, r15 # number of read bytes
     call write
 
     # restore the buffer
     add rsp, BUF_SIZE
 
-    ret
+    jmp end
 
 
   post:
@@ -102,9 +100,13 @@ req_handler:
   write_res_msg:
     # write the response message to the acceptfd
     mov rdi, r12
-    mov rsi, res_msg
+    lea rsi, [rip + res_msg]
     mov rdx, RES_MSG_SIZE
     call write
     ret
 
-ret
+  end:    
+    pop r15
+    pop r14
+    ret
+

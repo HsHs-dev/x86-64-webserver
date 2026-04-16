@@ -25,6 +25,11 @@
 
 _start:
 
+# save callee saved registers to use them
+push rbx
+push r12
+push r13
+
 # prolouge
 push rbp
 mov rbp, rsp
@@ -41,11 +46,11 @@ call bind
 mov rdi, rbx
 call listen
 
-mov rdi, rbx
-call accept
-
 # requests accepting block
-accept:
+accept_loop:
+
+  mov rdi, rbx
+  call accept
 
   # save the acceptfd
   mov r12, rax
@@ -95,12 +100,15 @@ accept:
     # if child terminate the program
     mov rax, r13
     cmp rax, 0x0
-    jnz accept
+    jnz accept_loop
 
 
 # epilouge
 mov rsp, rbp
 pop rbp
+pop r13
+pop r12
+pop rbx
 mov rdi, EXIT_SUCCESS
 mov rax, SYS_EXIT
 syscall
