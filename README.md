@@ -74,7 +74,7 @@ curl http://127.0.0.1/<path-to-file-to-be-read>
 to perform a `GET` request, or
 
 ```bash
-curl -X POST http://127.0.0.1/<path-to-file-to-be-created -d "<content>"
+curl -X POST http://127.0.0.1/<path-to-file-to-be-created-or-updated> -d "<content>"
 ```
 
 for a `POST` request
