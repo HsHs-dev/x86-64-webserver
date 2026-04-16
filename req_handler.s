@@ -24,7 +24,7 @@
 .equ GET_FILENAME_OFFSET,  0x4
 .equ POST_FILENAME_OFFSET, 0x5
 
-.equ BUF_SIZE, 0x100
+.equ BUF_SIZE, 0x2000 
 
 .equ O_RDONLY,      0x0
 .equ O_WRONLY,      0x1
@@ -59,10 +59,11 @@ req_handler:
     cmp al, SPACE
     je get_done
     inc rsi
-    jmp loop
+    jmp get_loop
     get_done:
     mov byte ptr [rsi], 0x0
 
+    mov rsi, O_RDONLY
     call open
 
     # save the opened fd
@@ -94,7 +95,6 @@ req_handler:
     add rsp, BUF_SIZE
 
     jmp end
-
 
 
   post:
@@ -137,7 +137,7 @@ req_handler:
     add rdx, 0x4 # skip the \r\n\r\n
     add rax, 0x4
     mov r14, rdx
-#    sub r15, rax
+    sub r15, rax
 
     mov rsi, O_WRONLY | O_CREAT
     mov rdx, 0777
@@ -156,8 +156,6 @@ req_handler:
     call write_res_msg
 
     jmp end
-
-
 
 
   write_res_msg:
