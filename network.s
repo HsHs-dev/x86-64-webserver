@@ -85,7 +85,7 @@ bind:
 
 /*
 marks the socket referred to by sockfd as a passive socket,
-that is, as a socket that will be used to accept in comingconnection requests 
+that is, as a socket that will be used to accept in coming connection requests 
 int listen(int sockfd, int backlog)
 */
 listen:

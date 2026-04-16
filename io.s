@@ -47,7 +47,12 @@ write:
   syscall
   ret
 
-/**/
+/*
+closes a file descriptor, so that it no longer refers to any file 
+and may be reused.
+int close(int fd)
+*/
+# all args are provided by the caller
 close:
   mov rax, SYS_CLOSE
   syscall
