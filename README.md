@@ -1,57 +1,86 @@
-# x64-webserver
+# 🚀 x64-webserver
 
-A minimal HTTP server written in x86-64 assembly for Linux.
+A minimal HTTP server written in x86-64 assembly for Linux, using only syscalls.
 
-It builds a single binary named `server`, listens on TCP port `80`, forks for each accepted connection, and supports two basic request types:
+---
 
-- `GET /path` reads a file from disk and returns its contents after `HTTP/1.0 200 OK`
-- `POST /path` creates or overwrites a file with the request body, then returns `HTTP/1.0 200 OK`
+## ✨ Features
 
-## Files
+* **Zero Dependencies:** No `libc` or external libraries. Just raw assembly and the Linux kernel.
+* **Concurrent:** Uses the `fork` model to handle multiple incoming connections simultaneously.
+* **Ultra Lightweight:** Compiles to a tiny binary (typically < 5KB).
+* **I/O:** Implements basic `GET` and `POST` methods for file interaction.
+* **Pure Syscalls:** Leverages `sys_socket`, `sys_bind`, `sys_fork`, and more.
 
-- `main.s` starts the server, accepts connections, and forks child processes
-- `network.s` wraps the socket-related syscalls
-- `io.s` wraps `open`, `read`, `write`, and `close`
-- `req_handler.s` parses `GET` and `POST` requests and performs file I/O
-- `Makefile` builds the project
+---
 
-## Build
+## 🏗 Project Structure
+
+an example of the request flow will be:
+
+socket → bind → listen → accept → fork → parse → open, read/write, close → respond
+
+The codebase is modularized to separate networking logic from request handling:
+
+| File | Description | Key Syscalls |
+| :--- | :--- | :--- |
+| **`main.s`** | The entry point (`_start`). Orchestrates the `accept` loop and process forking. | `fork`, `exit` |
+| **`network.s`** | Socket abstraction layer. Handles IPv4 binding on port 80. | `socket`, `bind`, `listen`, `accept` |
+| **`req_handler.s`** | Parses HTTP headers and routes `GET`/`POST` logic. | — |
+| **`io.s`** | Lightweight wrappers for file and stream operations. | `open`, `read`, `write`, `close` |
+| **`Makefile`** | Simple build script using `as` and `ld`. | — |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+You need a Linux environment with `binutils` (specifically `as` and `ld`) installed, which are installed by default with `gcc`.
+
+### Build
+
+To assemble and link the server, simply run:
 
 ```bash
 make
 ```
 
-This produces:
+### Run
+
+Port 80 requires elevated privileges on most systems, so run it with sudo
 
 ```bash
-./server
+sudo make run
 ```
 
-## Run
+### Behavior
+
+* Listens on IPv4 `0.0.0.0:80`, looking at all available interfaces
+* Uses a fork-per-connection model
+* Reads request data into a fixed-size buffer
+* Returns an HTTP response header: `HTTP/1.0 200 OK`
+
+---
+
+## Usage
+
+A basic example usage will be to run the server in a terminal then in another one do
 
 ```bash
-make run
+curl http://127.0.0.1/<path-to-file-to-be-read>
 ```
 
-Or:
+to perform a `GET` request, or
 
 ```bash
-./server
+curl -X POST http://127.0.0.1/<path-to-file-to-be-created -d "<content>"
 ```
 
-Note: the server binds to port `80`, which usually requires root privileges on Linux.
+for a `POST` request
 
-## Behavior
+---
 
-- Listens on IPv4 `0.0.0.0:80`
-- Uses a fork-per-connection model
-- Reads request data into a fixed-size buffer
-- Returns a very small HTTP response header: `HTTP/1.0 200 OK`
+## License
 
-## Limitations
-
-- Linux only
-- x86-64 only
-- No error handling or status codes other than `200 OK`
-- No directory handling, routing, MIME types, or persistent connections
-- Request parsing is very minimal and only expects simple `GET` and `POST` requests
+This project is licensed under the MIT License - see the LICENSE.md file for details
