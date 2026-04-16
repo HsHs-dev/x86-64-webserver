@@ -65,7 +65,7 @@ sudo make run
 
 ## Usage
 
-A basic example usage will be to run the server in a terminal then in another one do
+A basic usage example will be to run the server in a terminal then in another one do
 
 ```bash
 curl http://127.0.0.1/<path-to-file-to-be-read>
