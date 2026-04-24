@@ -71,13 +71,13 @@ sudo make run
 A basic usage example will be to run the server in a terminal then in another one do
 
 ```bash
-curl http://127.0.0.1/<path-to-file-to-be-read>
+curl http://127.0.0.1/<path-to-file>
 ```
 
 to perform a `GET` request, or
 
 ```bash
-curl -X POST http://127.0.0.1/<path-to-file-to-be-created-or-updated> -d "<content>"
+curl -X POST http://127.0.0.1/<path-to-file> -d "<content>"
 ```
 
 for a `POST` request
