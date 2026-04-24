@@ -65,6 +65,9 @@ sudo make run
 
 ## Usage
 
+>[!Note]
+> You have to provide the `absolute` path to the file you want to read from or write to
+
 A basic usage example will be to run the server in a terminal then in another one do
 
 ```bash
