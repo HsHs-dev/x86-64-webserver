@@ -5,13 +5,40 @@
 .extern write
 .extern close
 
-.section .data
-  res_msg:
-    .ascii "HTTP/1.0 200 OK\r\n\r\n"
+.section .rodata
+  hello_msg:
+    .ascii "HTTP/1.1 200 OK\r\n"
+    .ascii "Content-Type: text/html; charset=utf-8\r\n"
+    .ascii "Connection: close\r\n\r\n"
+    .ascii "<!DOCTYPE html>\n"
+    .ascii "<html>\n"
+    .ascii "<head>\n"
+    .ascii "<style>\n"
+    .ascii "  body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, sans-serif; "
+    .ascii "         display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }\n"
+    .ascii "  .card { background: #1e293b; padding: 2.5rem; border-radius: 12px; "
+    .ascii "          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); border: 1px solid #334155; "
+    .ascii "          text-align: center; max-width: 400px; }\n"
+    .ascii "  h1 { color: #38bdf8; margin-top: 10px; }\n"
+    .ascii "  p { color: #94a3b8; line-height: 1.6; }\n"
+    .ascii "  .tag { background: #0ea5e9; color: white; padding: 0.25rem 0.75rem; "
+    .ascii "         border-radius: 9999px; font-size: 0.8rem; font-weight: bold; }\n"
+    .ascii "</style>\n"
+    .ascii "</head>\n"
+    .ascii "<body>\n"
+    .ascii "  <div class='card'>\n"
+    .ascii "    <span class='tag'>x86_64 Assembly</span>\n"
+    .ascii "    <h1>Server Online</h1>\n"
+    .ascii "    <p>This page was served directly from an assembly-based web server using Linux system calls.</p>\n"
+    .ascii "  </div>\n"
+    .ascii "</body>\n"
+    .ascii "</html>\n"
+  hello_msg_end:
+
 
 .global req_handler
 
-.equ RES_MSG_SIZE, 0x13
+.equ HELLO_MSG_SIZE, hello_msg_end - hello_msg
                  # "GET " = 0x47455420 flipped
 .equ GET_VAL,      0x20544547
                  # "POST" = 0x504f5354 flipped
@@ -161,8 +188,8 @@ req_handler:
   write_res_msg:
     # write the response message to the acceptfd
     mov rdi, r12
-    lea rsi, [rip + res_msg]
-    mov rdx, RES_MSG_SIZE
+    lea rsi, [rip + hello_msg]
+    mov rdx, HELLO_MSG_SIZE
     call write
     ret
 
