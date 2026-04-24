@@ -48,11 +48,14 @@ make
 
 ### Run
 
-Port 80 requires elevated privileges on most systems, so run it with sudo
+>[!Note]
+> Port 80 requires elevated privileges on most systems, so run it with sudo
 
 ```bash
 sudo make run
 ```
+
+To make sure you have successfully started the server, open your browser and go to [http://127.0.0.1/](http://127.0.0.1/) and you should see a welcome page
 
 ### Behavior
 
