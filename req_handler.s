@@ -6,7 +6,7 @@
 .extern close
 
 .section .rodata
-  hello_msg:
+hello_msg:
     .ascii "HTTP/1.1 200 OK\r\n"
     .ascii "Content-Type: text/html; charset=utf-8\r\n"
     .ascii "Connection: close\r\n\r\n"
@@ -15,14 +15,16 @@
     .ascii "<head>\n"
     .ascii "<style>\n"
     .ascii "  body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, sans-serif; "
-    .ascii "         display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }\n"
+    .ascii "         display: flex; flex-direction: column; justify-content: center; align-items: center; "
+    .ascii "         height: 100vh; margin: 0; }\n"
     .ascii "  .card { background: #1e293b; padding: 2.5rem; border-radius: 12px; "
     .ascii "          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); border: 1px solid #334155; "
-    .ascii "          text-align: center; max-width: 400px; }\n"
+    .ascii "          text-align: center; max-width: 400px; margin-bottom: 2rem; }\n"
     .ascii "  h1 { color: #38bdf8; margin-top: 10px; }\n"
     .ascii "  p { color: #94a3b8; line-height: 1.6; }\n"
     .ascii "  .tag { background: #0ea5e9; color: white; padding: 0.25rem 0.75rem; "
     .ascii "         border-radius: 9999px; font-size: 0.8rem; font-weight: bold; }\n"
+    .ascii "  footer { color: #64748b; font-size: 0.9rem; font-weight: 500; }\n"
     .ascii "</style>\n"
     .ascii "</head>\n"
     .ascii "<body>\n"
@@ -31,10 +33,10 @@
     .ascii "    <h1>Server Online</h1>\n"
     .ascii "    <p>This page was served directly from an assembly-based web server using Linux system calls.</p>\n"
     .ascii "  </div>\n"
+    .ascii "  <footer>Made with ❤️ by Hassan Siddig</footer>\n"
     .ascii "</body>\n"
     .ascii "</html>\n"
-  hello_msg_end:
-
+hello_msg_end:
 
 .global req_handler
 
