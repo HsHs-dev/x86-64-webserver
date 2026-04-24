@@ -56,6 +56,9 @@ sudo make run
 ```
 
 To make sure you have successfully started the server, open your browser and go to [http://127.0.0.1/](http://127.0.0.1/) and you should see the following page:
+
+<br>
+
 ![Welcome Page](./ok.jpg)
 
 ### Behavior
