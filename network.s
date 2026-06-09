@@ -17,6 +17,7 @@
 .equ SOCK_STREAM,   0x1     # Connection-based (TCP)
 .equ ANY,    0x0     # Bind to 0.0.0.0
 .equ PORT_80,       0x5000  # Port 80 in Big Endian (0x0050 swapped)
+.equ PORT_8080,     0x901F
 .equ SOCKADDR_IN_SIZE, 0x10  # 16 bytes
 
 
@@ -62,7 +63,7 @@ bind:
   # uint16_t sin_family
   mov word ptr [rsp], AF_INET
   # uint16_t sin_port big endian
-  mov word ptr [rsp + 2], PORT_80
+  mov word ptr [rsp + 2], PORT_8080
   # uint32_t sin_addr
   mov dword ptr [rsp + 4], ANY
   # uint8_t __pad[8]
